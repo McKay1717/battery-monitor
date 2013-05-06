@@ -14,6 +14,10 @@ try:
 except ImportError:
     pass
 
+# TODO:
+# * Check only when discharging
+# * Verify error
+
 Notify.init("battery-monitor")
 
 def check_battery():
