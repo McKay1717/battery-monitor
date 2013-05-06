@@ -7,6 +7,13 @@ from gi.repository import Gtk
 from gi.repository import Notify
 from gi.repository import GObject
 
+try:
+    import ctypes
+    libc = ctypes.CDLL('libc.so.6')
+    libc.prctl(15, 'battery-monitor', 0, 0)
+except ImportError:
+    pass
+
 Notify.init("battery-monitor")
 
 def check_battery():
@@ -40,7 +47,7 @@ def check_battery():
         fd.close()
 
         fd = open('/sys/class/power_supply/BAT0/status')
-        status = fd.readline().lowercase()
+        status = fd.readline().lower()
         fd.close()
     finally:
         print capacity, remaining, status
@@ -57,8 +64,10 @@ def check_battery():
         if notification:
             notification.show()
 
+    GObject.timeout_add(60000, check_battery)
 
-GObject.timeout_add(60000, check_battery)
+
+check_battery()
 Gtk.main()
 
 
